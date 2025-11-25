@@ -1,0 +1,16 @@
+{
+    "questions": {
+        "Pedia": [
+            "Child unintentionally lost weight lately",
+            "Child had poor weight gain over the last few months",
+            "Child been eating/feeding less in the last few weeks",
+            "Child is obviously underweight"
+        ],
+        "Adult": [
+            "BMI < 20.5 or BMI >= 30",
+            "Patient lost weight within the last 3 months",
+            "Patient had a reduced dietary intake in the last week",
+            "Patient severely ill (e.g. in intensive therapy)"
+        ]
+    }
+}

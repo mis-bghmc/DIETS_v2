@@ -1,0 +1,56 @@
+{
+    "types": [
+        {
+            "id": "34",
+            "name": "Blenderized",
+            "description": "Mixture of blenderized food source, with or without addition of enteral formula. Its ingredients can be customized based on food intolerances and allergies of the patients."
+        },
+        {
+            "id": "37",
+            "name": "Cancer Specific Formula",
+            "description": "Specialized formula and are designed to meet the specific nutrient needs of patients with CANCER patients"
+        },
+        {
+            "id": "36",
+            "name": "Diabetic Formula",
+            "description": "Specialized formula and are designed to meet the specific nutrient needs of patients with DIABETIC patients"
+        },
+        {
+            "id": "38",
+            "name": "Renal Specific Formula",
+            "description": "Specialized formula and are designed to meet the specific nutrient needs of patients with RENAL disease"
+        },
+        {
+            "id": "39",
+            "name": "Semi-elemental Formula",
+            "description": "Contain amino acids of varying length, simple carbohydrates, and MCTs. They are partially pre-digested but not fully pre-digested."
+        },
+        {
+            "id": "35",
+            "name": "Standard Polymeric Formula",
+            "description": "This is also called as standard formula which is provided to those who can digest and absorb nutrients without difficulties."
+        },
+        {
+            "id": "45",
+            "name": "Therapeutic Milk (PEDIA)",
+            "description": "Intended for pediatric patients with severe acute malnutrition (SAM) in therapeutic feeding centers: F75 is only used in the initial phase of treatment (phase 1). F100 is used in the transition phase"
+        }
+    ],
+    "mode": [
+        {
+            "id": "01",
+            "name": "Continuous",
+            "description": ""
+        },
+        {
+            "id": "02",
+            "name": "Intermittent",
+            "description": ""
+        },
+        {
+            "id": "03",
+            "name": "Bolus",
+            "description": ""
+        }
+    ]
+}

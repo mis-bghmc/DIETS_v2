@@ -1,0 +1,52 @@
+{
+    "menu": {
+        "main": [
+            {
+                "id": "08",
+                "name": "No Known Allergy"
+            },
+            {
+                "id": "09",
+                "name": "Undetermined"
+            },
+            {
+                "id": "10",
+                "name": "With Food Allergy"
+            },
+            {
+                "id": "11",
+                "name": "Others"
+            }
+        ],
+        "sub": [
+            {
+                "id": "01",
+                "name": "Chicken/Egg"
+            },
+            {
+                "id": "02",
+                "name": "Fish/Seafood"
+            },
+            {
+                "id": "03",
+                "name": "Nuts"
+            },
+            {
+                "id": "04",
+                "name": "Soya Products"
+            },
+            {
+                "id": "05",
+                "name": "Milk/Dairy Products"
+            },
+            {
+                "id": "06",
+                "name": "Spices"
+            },
+            {
+                "id": "07",
+                "name": "Pseudo-Allergen"
+            }
+        ]
+    }
+}

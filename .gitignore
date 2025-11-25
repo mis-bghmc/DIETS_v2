@@ -1,0 +1,49 @@
+# --- Global ---
+.DS_Store
+/.idea
+/.vscode
+/.fleet
+
+# Frontend 
+# Nuxt dev/build outputs
+/Frontend/.output
+/Frontend/.data
+/Frontend/.nuxt
+/Frontend/.nitro
+/Frontend/.cache
+/Frontend/dist
+# Node dependencies
+/Frontend/node_modules/
+
+# Logs
+/Frontend/logs/
+/Frontend/*.log
+
+# Misc
+/Frontend/.DS_Store
+/Frontend/.fleet
+/Frontend/.idea
+
+# Local env files
+/Frontend/.env
+/Frontend/.env.*
+!/Frontend/.env.example
+
+# Dockerfiles
+/Frontend/docker/
+/Frontend/docker-stack.yml
+
+# --- Backend
+/Backend/vendor/
+/Backend/storage/
+/Backend/node_modules/
+
+#  ENV Files
+/Backend/.env
+/Backend/.env.*
+!/Backend/.env.example
+
+
+# Dockerfiles
+/Backend/docker/
+/Backend/docker-stack.yml

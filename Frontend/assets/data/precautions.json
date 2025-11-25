@@ -1,0 +1,34 @@
+{
+    "types": [
+        {
+            "id": "24",
+            "name": "No Pork",
+            "description": "Eliminating pork and pork products in the diet which may be due to religious practices and/or food preferences"
+        },
+        {
+            "id": "27",
+            "name": "No Red Meat",
+            "description": "Eliminating pork and beef in the diet "
+        },
+        {
+            "id": "28",
+            "name": "No Dark Colored Foods",
+            "description": "Eliminating all foods/drinks colored red, brown or black, red meat, spicy and oily, which may affect the color of the stools and the vomitus."
+        },
+        {
+            "id": "41",
+            "name": "G6PD Deficiency",
+            "description": "Diet eliminating fava beans, red wine, legumes (abitsuelas, garbanzos, kadyos, munggo), blueberry, soya food (taho, tokwa, soy sauce), tonic water and bitter melon/ampalaya in the diet"
+        },
+        {
+            "id": "10",
+            "name": "Hypo-allergenic",
+            "description": "Individualized diet based on the specific food allergies. Common allergens are chicken, egg, fish, seafood, nuts, soya products, milk/dairy products and spices such as celery, garlic, cinnamon, sesame, turmeric, onion, mustard, vanilla and black pepper "
+        },
+        {
+            "id": "58",
+            "name": "Strict Aspiration Precautions",
+            "description": ""
+        }
+    ]
+}

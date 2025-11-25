@@ -1,0 +1,42 @@
+# === Node / Dependencies ===
+node_modules
+npm-debug.log*
+yarn-error.log
+.pnpm-debug.log*
+
+# === Nuxt Build Outputs ===
+.nuxt
+.output
+dist
+
+# === Environment / Config Files ===
+.env.*
+!.env.example
+
+
+# === Git / VCS ===
+.git
+.gitignore
+.gitattributes
+
+# === Docker / CI ===
+Dockerfile
+.dockerignore
+docker-compose.yml
+*.swp
+*.swo
+
+# === Editor / IDE ===
+.vscode
+.idea
+*.iml
+
+# === System / OS Files ===
+.DS_Store
+Thumbs.db
+
+# === Tests / Documentation (optional) ===
+tests
+__tests__
+coverage
+*.md

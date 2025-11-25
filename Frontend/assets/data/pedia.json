@@ -1,0 +1,54 @@
+{
+    "age": [
+        {
+            "id": "05",
+            "name": "1-2 years",
+            "data": {
+                "kcal": 1000,
+                "protein": "15 %",
+                "carbohydrates": "55 %",
+                "fats": "30 %"
+            }
+        },
+        {
+            "id": "06",
+            "name": "3-5 years",
+            "data": {
+                "kcal": 1300,
+                "protein": "15 %",
+                "carbohydrates": "55 %",
+                "fats": "30 %"
+            }
+        },
+        {
+            "id": "07",
+            "name": "6-9 years",
+            "data": {
+                "kcal": 1500,
+                "protein": "15 %",
+                "carbohydrates": "55 %",
+                "fats": "30 %"
+            }
+        },
+        {
+            "id": "07",
+            "name": "10-12 years",
+            "data": {
+                "kcal": 2000,
+                "protein": "15 %",
+                "carbohydrates": "55 %",
+                "fats": "30 %"
+            }
+        },
+        {
+            "id": "08",
+            "name": "13-18 years",
+            "data": {
+                "kcal": 2500,
+                "protein": "15 %",
+                "carbohydrates": "55 %",
+                "fats": "30 %"
+            }
+        }
+    ]
+}

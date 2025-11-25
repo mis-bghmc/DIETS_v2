@@ -1,0 +1,53 @@
+{
+    "types": [
+        {
+            "id": "37",
+            "name": "Cancer Specific Formula",
+            "description": "Specialized formula and are designed to meet the specific nutrient needs of patients with CANCER patients"
+        },
+        {
+            "id": "36",
+            "name": "Diabetic Formula",
+            "description": "Specialized formula and are designed to meet the specific nutrient needs of patients with DIABETIC patients"
+        },
+        {
+            "id": "38",
+            "name": "Renal Specific Formula",
+            "description": "Specialized formula and are designed to meet the specific nutrient needs of patients with RENAL disease"
+        },
+        {
+            "id": "39",
+            "name": "Semi-elemental Formula",
+            "description": "Contain amino acids of varying length, simple carbohydrates, and MCTs. They are partially pre-digested but not fully pre-digested."
+        },
+        {
+            "id": "35",
+            "name": "Standard Polymeric Formula",
+            "description": "This is also called as standard formula which is provided to those who can digest and absorb nutrients without difficulties. "
+        },
+        {
+            "id": "44",
+            "name": "Modular Protein Formula",
+            "description": "It is created from individual macronutrient preparations called modules, are prepared for patients who require specific nutrient combinations to treat their illnesses and can meet all of a person’s nutrient needs"
+        },
+        {
+            "id": "29",
+            "name": "Therapeutic Milk (PEDIA)",
+            "description": "Intended for pediatric patients with severe acute malnutrition (SAM) in therapeutic feeding centers: F75 is only used in the initial phase of treatment (phase 1). F100 is used in the transition phase"
+        }
+    ],
+    "time": [
+        {
+            "name": "AM Snack",
+            "code": "AM"
+        },
+        {
+            "name": "PM Snack",
+            "code": "PM"
+        },
+        {
+            "name": "MN Snack",
+            "code": "MN"
+        }
+    ]
+}
