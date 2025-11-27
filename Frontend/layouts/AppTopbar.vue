@@ -13,6 +13,7 @@ const { user } = storeToRefs(user_store);
 
 const is_dietitian = ref(user.value.user_level === '59');
 const is_server = ref(user.value.user_level === '60');
+const is_validUser = computed(() => is_dietitian.value || is_server.value);
 const is_loggedOut = ref(false);
 const is_connected = ref(false);
 const is_loadingLogout = ref(false);
@@ -93,14 +94,10 @@ watch(
 //  On mounted
 onMounted(()=> {
     //  Listener for dietitians and food servers only
-    if(is_dietitian.value || is_server.value){
+    if(is_validUser.value) {
         const connection = echo.connector.pusher.connection;
     
         is_connected.value = connection.state === 'connected';
-
-        nextTick(() => {
-            notification.value?.checkForUnread();
-        });
 
         connection.bind('state_change', ({ current }) => {
             is_connected.value = current === 'connected';
@@ -218,7 +215,7 @@ onMounted(()=> {
 
                     <div class="absolute hidden right-0">
                         <div class="fixed lg:relative bg-[--surface-overlay] border-2 border-primary rounded mt-1 p-4 z-50 left-1/2 -translate-x-1/2 h-auto w-[calc(100vw-2rem)] lg:w-[50vw]">
-                            <Notification ref="notification" @unread="checkForUnread" />
+                            <Notification ref="notification" @unread="checkForUnread"/>
                         </div>
                     </div>
                 </div>

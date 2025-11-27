@@ -265,6 +265,12 @@ defineExpose({
     refreshNotifications,
     playNotificationSfx
 });
+
+// On Mounted
+onMounted(() => {
+    checkForUnread();
+});
+
 </script>
 
 <template>
