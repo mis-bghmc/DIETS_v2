@@ -19,11 +19,10 @@ const props = defineProps({
 const emit = defineEmits(['updated']);
 
 const patient = ref(props.data?.[0]);
-
-// ANCHOR computed properties
+const isVisible_dietRequirements = computed(() => !['18', '17', '16'].includes(order.value?.diet_type));
 const isAdult = computed(() => patient.value?.patage >= 18);
-
-const isCalories_invalid = computed(() =>  isVisible_dietRequirements.value && !order.value.calories);
+const isInfant = computed(() => patient.value?.patage < 1);
+const isCalories_invalid = computed(() => !isInfant.value && (isVisible_dietRequirements.value && !order.value.calories));
 const isProtein_invalid = computed(() => !order.value?.protein && isAdult.value);
 const isCarbohydrates_invalid = computed(() => !order.value?.carbohydrates && isAdult.value && order.value?.diet_type !== '34' && order.value?.sns_type.length < 1);
 const isFats_invalid = computed(() => !order.value?.fats &&isAdult.value && order.value?.diet_type !== '34' && order.value?.sns_type.length < 1);
@@ -32,6 +31,7 @@ const isDietType_invalid = computed(() => !order.value?.diet_type);
 const isTherapeuticType_invalid = computed(() => order.value?.diet_type === 'Therapeutic Diets' && !order.value?.diet_type_sub);
 const isEnteral_invalid = computed(() => order.value?.category === 'Enteral' && (!order.value?.feeding_mode || !order.value?.feeding_duration || !order.value?.feeding_frequency));
 const isSnsType_invalid = computed(() => !!(order.value.sns_type?.length && !order.value.sns_frequency?.length));
+
 const isFormInvalid = computed(() => {
 
     if (order.value.diet_type === '16') {
@@ -53,7 +53,7 @@ const isFormInvalid = computed(() => {
 
 });
 
-const isVisible_dietRequirements = computed(() => !['18', '17', '16'].includes(order.value?.diet_type));
+
 
 const isVisible_newOrder = ref(false);
 const isVisible_unexpected = ref(false);
@@ -81,13 +81,19 @@ const hasError_foodPrecautions = ref(false);
 
 const dietTypes_options = ref();
 const dietSubTypes_options = ref();
-const feedingModes_options = computed(() => { 
-    if (order.value.diet_type === '34') { 
+const feedingModes_options = computed(() => {
+    if (order.value.diet_type === '34') {
         return feeding_modes.value.filter(item => item.id !== '1');
     } else {
         return feeding_modes.value;
     }
-})
+});
+// ANCHOR nutrient percentage formula
+const nutrientPercentageFormula = ref({
+    protein: 15,
+    carbohydrates: 55,
+    fats: 30
+});
 
 const initOrder = () => {
     order.value = {
@@ -121,7 +127,6 @@ const initDraft = () => {
         remarks: null
     }
 };
-
 
 //  Save doctor's order
 async function saveOrder() {
@@ -230,11 +235,13 @@ function getCalories() {
             : null;
 }
 
-//  Get nutrient value
+// ANCHOR Get nutrient value
 function setNutrients(c) {
-    order.value.protein = c ? Math.round((c * 0.15) / 4) : null;
-    order.value.carbohydrates = c ? Math.round((c * 0.55) / 4) : null;
-    order.value.fats = c ? Math.round((c * 0.30) / 9) : null;
+    if (isInfant.value) return;
+    
+    order.value.protein = c ? Math.round((c * (nutrientPercentageFormula.value.protein / 100 )) / 4) : null;
+    order.value.carbohydrates = c ? Math.round((c * (nutrientPercentageFormula.value.carbohydrates / 100 )) / 4) : null;
+    order.value.fats = c ? Math.round((c * (nutrientPercentageFormula.value.fats / 100 )) / 9) : null;
 }
 
 //  Set food allergies
@@ -362,11 +369,12 @@ async function getAllowedPersonnel() {
 }
 
 
-//  Watcher for order
+// ANCHOR Watcher 
 watch(
-    order,
-    (new_value) => {
-        if(!isVisible_unexpected.value) localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({...new_value}));
+    [order, nutrientPercentageFormula],
+    ([new_Order, new_NutrientPercentageFormula]) => {
+        if (!isVisible_unexpected.value) localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({ ...new_Order }));
+        setNutrients(new_Order.calories);
     },
     { deep: true }
 );
@@ -478,7 +486,35 @@ onMounted(async () => {
                                 </AccordionContent>
                             </AccordionPanel>
 
-                            <AccordionPanel value="2">
+                            <AccordionPanel value="2" v-if="!isAdult">
+                                <AccordionHeader> 
+                                    <div class="flex justify-start items-center gap-4">
+                                        <Icon name="healthicons:child-care" size="1.5rem"/>
+                                        <span class="text-base font-bold"> Pediatric Nutrient Guide</span>
+                                    </div>
+                                </AccordionHeader>
+                                <AccordionContent>
+                                    <p class="ml-12"> Prescribed macronutrient percentage range.</p>
+                                    <ul class="flex flex-col gap-2 text-sm">
+                                        <li class="flex items-center gap-2">
+                                            <Icon name="healthicons:star-small" class="w-10 lg:text-2xl text-primary" />
+                                            <span>Carbohydrates: 45% - 60%</span>
+                                        </li>
+
+                                        <li class="flex items-center gap-2" >
+                                            <Icon name="healthicons:star-small" class="w-10 lg:text-2xl text-primary"/>
+                                            <span>Protein: 10% - 20%</span>
+                                        </li>
+
+                                        <li class="flex items-center gap-2">
+                                            <Icon name="healthicons:star-small" class="w-10 lg:text-2xl text-primary" />
+                                            <span>Fats: 30% - 35%</span>
+                                        </li>
+                                    </ul>
+                                </AccordionContent>
+                            </AccordionPanel>
+
+                            <AccordionPanel value="3">
                                 <AccordionHeader> 
                                     <div class="flex justify-start items-center gap-4">
                                         <Icon name="fluent:drafts-16-filled" size="1.5rem"/>
@@ -628,8 +664,8 @@ onMounted(async () => {
                                 </div>
                                 
                                 <Divider type="dashed" />
-                                
-                                <div class="flex flex-col md:flex-wrap lg:flex-row gap-2">
+                                <!-- ANCHOR Nutrients form -->
+                                <div class="flex flex-col md:flex-wrap lg:flex-row gap-2" v-if="isAdult">
                                     <div class="flex flex-col md:flex-row gap-2 w-full">
                                         <IftaLabel class="w-full md:w-56">
                                             <InputNumber id="protein" v-model="order.protein" :min="0.01" :maxFractionDigits="2" :invalid="isProtein_invalid" class="w-full" />
@@ -650,6 +686,31 @@ onMounted(async () => {
     
                                         <IftaLabel class="w-full md:w-56">
                                             <InputNumber id="fiber" v-model="order.fiber" :min="0.01" :maxFractionDigits="2" class="w-full" />
+                                            <label for="fiber">Fiber (g)</label>
+                                        </IftaLabel>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col md:flex-wrap lg:flex-row gap-2" v-else>
+                                    <div class="flex flex-col md:flex-row gap-2 w-full">
+                                        <IftaLabel class="w-full md:w-56">
+                                            <InputNumber id="protein" v-model="nutrientPercentageFormula.protein" :min="10" :max="20" suffix=" %"  :invalid="isProtein_invalid" class="w-full" @change="setNutrients()"/>
+                                            <label for="protein">Protein ({{ order.protein }} g)</label>
+                                        </IftaLabel>
+    
+                                        <IftaLabel class="w-full md:w-56">
+                                            <InputNumber id="carbohydrates" v-model="nutrientPercentageFormula.carbohydrates" :min="45" :max="60" suffix=" %"  :invalid="isCarbohydrates_invalid" class="w-full" @change="setNutrients()"/>
+                                            <label for="carbohydrates">Carbohydrates ({{ order.carbohydrates }} g)</label>
+                                        </IftaLabel>
+                                    </div>
+
+                                    <div class="flex flex-col md:flex-row gap-2 w-full">
+                                        <IftaLabel class="w-full md:w-56">
+                                            <InputNumber id="fats" v-model="nutrientPercentageFormula.fats" :min="30" :max="35" suffix=" %"  :invalid="isFats_invalid" class="w-full" @change="setNutrients()"/>
+                                            <label for="fats">Fats ({{ order.fats }} g)</label>
+                                        </IftaLabel>
+    
+                                        <IftaLabel class="w-full md:w-56">
+                                            <InputNumber id="fiber" v-model="nutrientPercentageFormula.fiber" :min="0.01" :maxFractionDigits="2" class="w-full" />
                                             <label for="fiber">Fiber (g)</label>
                                         </IftaLabel>
                                     </div>
