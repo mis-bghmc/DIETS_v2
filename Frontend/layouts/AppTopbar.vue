@@ -223,7 +223,7 @@ onMounted(()=> {
                
                
                 <div v-if="route.path.startsWith('/doctors')">
-                    <SearchPatients />
+                    <SearchPatients :global="true" />
                 </div>
 
                 <Divider v-if="is_dietitian || route.path.startsWith('/doctors')" layout="vertical" />

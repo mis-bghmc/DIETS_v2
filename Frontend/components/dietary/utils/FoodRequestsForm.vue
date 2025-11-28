@@ -9,8 +9,13 @@ const props = defineProps({
 
 const echo = useEcho();
 const toast = useToast();
+
 const user_store = useUserStore();
 const { user } = storeToRefs(user_store);
+
+const patients_store = usePatientsStore();
+const { admitted_patients } = storeToRefs(patients_store);
+
 const { formatAllNumeric, formatMonthShort } = useDate();
 
 const visible = ref(false);
