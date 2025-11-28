@@ -82,6 +82,11 @@ function checkDate() {
 function validate() {
     return !requesting.value || !qnty.value || !meals_selected.value?.length;
 }
+
+const requestType_selected = ref('option_1');
+const frequencyType_selected = ref('option_1');
+const selectedPatients = ref([]);
+
 </script>
 
 <template>
@@ -99,7 +104,7 @@ function validate() {
             <span class="font-bold">Food Request</span>
         </template>
 
-        <div class="flex flex-col gap-4 pt-4">
+        <!-- <div class="flex flex-col gap-4 pt-4">
             <div>
                 <span class="font-semibold">Date : </span>
                 <span>{{ formatMonthShort(date) }}</span>
@@ -157,6 +162,55 @@ function validate() {
             </FloatLabel>
 
             <Button label="Create" :disabled="validate() || saving" :loading="saving" @click="create()" />
+        </div> -->
+
+        <div>
+            <p>Select Food Request Type</p>
+            <div class="flex gap-4 mt-4">
+                <div class="flex items-center">
+                    <RadioButton v-model="requestType_selected" inputId="option_1" name="option_1" value="option_1" />
+                    <label for="option_1" class="ml-2">Patient</label>
+                </div>
+                <div class="flex items-center">
+                    <RadioButton v-model="requestType_selected" inputId="option_2" name="option_2" value="option_2" />
+                    <label for="option_2" class="ml-2">Non-Patient</label>
+                </div>
+            </div>
+
+            <div>
+                <p>Date:</p>
+                <div class="flex gap-4 mt-4">
+                    <div class="flex items-center">
+                        <RadioButton v-model="frequencyType_selected" inputId="option_1" name="option_1" value="option_1" />
+                        <label for="option_1" class="ml-2">Specific Date</label>
+                    </div>
+                    <div class="flex items-center">
+                        <RadioButton v-model="frequencyType_selected" inputId="option_2" name="option_2" value="option_2" />
+                        <label for="option_2" class="ml-2">Re-Occuring</label>
+                    </div>
+                </div>
+                <DatePicker v-model="icondisplay" showIcon fluid iconDisplay="input" v-if="frequencyType_selected === 'option_1'" />
+            </div>
+
+            <div v-if="requestType_selected === 'option_1'" class="mt-6">
+                <p>Select Patients</p>
+                <MultiSelect 
+                    v-model="selectedPatients" 
+                    :options="[]" 
+                    optionLabel="name" 
+                    placeholder="Select Patients" 
+                    class="w-full mt-2" 
+                    :disabled="false" 
+                    filter 
+                />
+            </div>
+
+            <div>
+
+            </div>
         </div>
     </Dialog>
+
+
+
 </template>
