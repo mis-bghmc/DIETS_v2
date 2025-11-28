@@ -6,7 +6,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <div class="container mx-auto print:m-0">
+    <div class="print:m-0">
         <div v-if="error">
             <span class="font-bold text-red-400">An error has occured. Please log it into the intranet or call extension 202.</span>
         </div>
