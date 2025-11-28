@@ -130,16 +130,16 @@ function getWardCount(ward, diet) {
     }
 
     const filter = (item) => {
-        return diet_group.value === 'Enteral' && diet === 'FTW' ? item.dietname !== 'Blenderized' : dietname(item) === diet;
+        return diet_group.value === 'Enteral' && diet === 'FTW' ? diets.value?.includes(dietname(item)) : dietname(item) === diet;
     } 
-
+    
     return ward_grouped.value?.[ward]?.filter(filter)?.length;
 }
 
 //  Get diet total per ward
 function getWardTotal(diet) {
     if(diet_group.value === 'Enteral' && diet === 'FTW') {
-        return filtered.value?.filter(item => item.dietname !== 'Blenderized').length;
+        return filtered.value?.filter(item => diets.value?.some(d => d.includes(item.dietname))).length;
     }
 
     return diet_grouped.value?.[diet]?.length;
@@ -171,7 +171,7 @@ function getWardRoomTypeCount(ward, room_type, diet) {
     }
 
     const filter = (item) => {
-        return diet_group.value === 'Enteral' && diet === 'FTW' ? item.dietname !== 'Blenderized' : dietname(item) === diet;
+        return diet_group.value === 'Enteral' && diet === 'FTW' ? diets.value?.includes(dietname(item)) : dietname(item) === diet;
     } 
 
     return Object.groupBy(ward_grouped.value?.[ward], checkRoomType)?.[room_type]?.filter(filter)?.length;
@@ -185,7 +185,7 @@ function getRoomTypeTotal(room_type) {
 //  Get room type count per diet
 function getDietRoomTypeCount(room_type, diet) {
     if(diet_group.value === 'Enteral' && diet === 'FTW') {
-        return filtered.value?.filter(item => item.dietname !== 'Blenderized' && checkRoomType(item) === room_type).length;
+        return filtered.value?.filter(item => diets.value?.some(d => d.includes(item.dietname)) && checkRoomType(item) === room_type).length;
     }
 
     return diet_grouped.value?.[diet]?.filter(item => checkRoomType(item) === room_type)?.length;
