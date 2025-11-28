@@ -3,9 +3,10 @@ import { FilterMatchMode } from '@primevue/core/api';
 import NoData from '~/public/images/no-data.svg';
 
 const { setMealTimeSuffix } = useEnteralFeeding();
+const { formatMonthShort } = useDate();
 
 const props = defineProps({
-    date: String,
+    date: Date,
     mealTime: String,
     census: Array,
     type: String
@@ -72,14 +73,14 @@ onMounted(() => {
         v-model:visible="visible" 
         :dismissableMask=false
         :draggable=false
-        pt:root:class="!w-full md:!w-[96vw] !h-full !border-primary !border-2 !rounded-md sm:!text-sm md:!text-base lg:!text-lg" 
+        pt:root:class="!w-full md:!w-11/12 !h-full !border-primary !border-2 !rounded-md sm:!text-sm md:!text-base lg:!text-lg" 
         pt:header:class="!pb-2 !pt-3 !border-b !border-primary"
         pt:content:class="!p-0"
         pt:mask:class="!backdrop-blur-sm" 
     >
         <template #header>
             <div class="flex my-5 gap-2 items-center">
-                <span class="font-bold">{{ date }} - {{ mealTime }}{{ setMealTimeSuffix(mealTime) }}</span>
+                <span class="font-bold">{{ formatMonthShort(date) }} - {{ mealTime }}{{ setMealTimeSuffix(mealTime) }}</span>
             </div>
         </template>
 
@@ -146,7 +147,7 @@ onMounted(() => {
                 </template>
 
                 <template #body="{data}">
-                    <div class="mb-2 sm:text-sm md:text-base lg:text-lg pt-2">
+                    <div class="sm:text-sm md:text-base lg:text-lg py-2">
                         <div class="overflow-hidden relative border-none rounded-md h-7 bg-primary-100">
                             <div class="absolute inset-0 m-0 rounded-md border-none bg-primary-400 transition-width duration-500 ease-in-out" 
                                 :style="{width: getWidth('prepared', flattenObject(data)) + '%'}">
@@ -169,16 +170,20 @@ onMounted(() => {
                 </template>
 
                 <template #body="{data}">
-                    <div class="mb-2 sm:text-sm md:text-base lg:text-lg pt-2">
-                        <div class="overflow-hidden relative border-none rounded-md h-7 bg-primary-100">
-                            <div class="absolute inset-0 m-0 rounded-md border-none bg-primary-400 transition-width duration-500 ease-in-out" 
-                                :style="{width: getWidth('served', flattenObject(data)) + '%'}">
+                    <div class="sm:text-sm md:text-base lg:text-lg py-2">
+                        <div class="flex items-center gap-1">
+                            <div class="overflow-hidden relative border-none rounded-md h-7 bg-primary-100 w-full">
+                                <div class="absolute inset-0 m-0 rounded-md border-none bg-primary-400 transition-width duration-500 ease-in-out" 
+                                    :style="{width: getWidth('served', flattenObject(data)) + '%'}">
+                                </div>
+                                <div class="absolute inset-0 flex items-center justify-center text-slate-700 font-semibold">
+                                    <span>{{ getCountServed(flattenObject(data)) }}</span>
+                                    <span class="mx-2">/</span>
+                                    <span>{{ getTotalPrepared(flattenObject(data)) }}</span>
+                                </div>
                             </div>
-                            <div class="absolute inset-0 flex items-center justify-center text-slate-700 font-semibold">
-                                <span>{{ getCountServed(flattenObject(data)) }}</span>
-                                <span class="mx-2">/</span>
-                                <span>{{ getTotalPrepared(flattenObject(data)) }}</span>
-                            </div>
+                            
+                            <FoodServiceReport :date="date" :ward="data.name" :meal-time="mealTime" />
                         </div>
                     </div>
                 </template>

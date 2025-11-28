@@ -5,7 +5,7 @@ import NoData from '~/public/images/no-data.svg';
 const echo = useEcho();
 const { getPrimary, getSurface, isDarkTheme } = useLayout();
 const { setMealTimeSuffix } = useEnteralFeeding();
-const { formatAllNumeric, formatMonthShort } = useDate();
+const { formatAllNumeric } = useDate();
 
 const props = defineProps({
     date: Date
@@ -242,7 +242,7 @@ onMounted(()=> {
                 <div class="flex flex-1 gap-1 items-center">
                     <Button text :icon="expand ? 'pi pi-minus' : 'pi pi-plus'" :disabled="!census?.length" @click="expand = !expand" />
                     <span class="font-semibold text-xl text-muted-color">Meal Census - {{ meal_time }}{{ setMealTimeSuffix(meal_time) }}</span>
-                    <MealCensus :date="formatMonthShort(date)" :meal-time="meal_time" :census="census" :type="type"/>
+                    <MealCensus :date="date" :meal-time="meal_time" :census="census" :type="type"/>
                 </div>
     
                 <div class="relative">
