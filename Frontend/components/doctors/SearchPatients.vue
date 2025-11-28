@@ -1,6 +1,5 @@
 <script setup>
 import { FilterMatchMode } from '@primevue/core/api';
-import { PatientsService } from '~/services/PatientsService';
 import NoData from '~/public/images/no-data.svg';
 
 const router = useRouter();
@@ -10,19 +9,24 @@ const { formatMonthShort } = useDate();
 const user_store = useUserStore();
 const { user } = storeToRefs(user_store);
 
-const visible = ref(false);
+const patients_store = usePatientsStore();
+const { admitted_patients, my_admitted_patients } = storeToRefs(patients_store);
 
-const { data, error, status } = await useAsyncData(
+const props = defineProps({
+    global: Boolean
+});
+
+const { error, status, refresh } = await useAsyncData(
     'admitted-patients', 
-    () => PatientsService.getAdmitted(),
+    () => patients_store.getAdmittedPatients(),
     {
         default: () => []
     }
 );
 
-const { data: my_patients, error: my_error, status: my_status } = await useAsyncData(
+const { refresh: my_refresh } = await useAsyncData(
     'my-patients', 
-    () => PatientsService.getMyPatients(user.value?.employeeid),
+    () => patients_store.getMyPatients(user.value?.employeeid),
     {
         default: () => []
     }
@@ -56,6 +60,8 @@ const initFilters = () => {
     };
 };
 
+const visible = ref(false);
+
 
 //  Redirect to patient's diet information page
 function redirect(event) {
@@ -66,7 +72,7 @@ function redirect(event) {
     router.push(`/doctors/patient/${enccode}`);
 }
 
-
+//  
 function checkPatientLocation(disnotes, er_status, ward_status) {
     if (!disnotes?.startsWith('ER') || ward_status === 'A') {
         return null;
@@ -76,6 +82,7 @@ function checkPatientLocation(disnotes, er_status, ward_status) {
     return key;
 }
 
+//
 function customFilter() {
     const filters = [
         checked_er_boarders.value
@@ -91,7 +98,7 @@ function customFilter() {
             : null,
 
         checked_my_patients.value
-            ? patient => my_patients.value?.some(p => p.enccode === patient.enccode)
+            ? patient => my_admitted_patients.value?.some(p => p.enccode === patient.enccode)
             : null
     ].filter(Boolean); // remove null entries
 
@@ -106,11 +113,17 @@ function customFilter() {
     );
 }
 
+//  
+async function show() {
+    visible.value = true;
+    await refresh();
+    await my_refresh();
+}
 
 
 //  Watcher for data
 watch(
-    data,
+    admitted_patients,
     (new_value) => {
         initFilters();
         patients_all.value = sortArray(
@@ -128,7 +141,7 @@ watch(
         wards.value = Object.keys(Object.groupBy(patients.value ?? [], ({wardname}) => wardname))?.sort() ?? [];
         diets.value = Object.keys(Object.groupBy(patients.value ?? [], ({dietname}) => dietname))?.sort() ?? [];
     },
-    { immediate: true }
+    { immediate: false }
 )
 
 //  Watcher for my custom filter checkboxes
@@ -142,9 +155,16 @@ watch(
 </script>
 
 <template>
-    <button type="button" class="text-primary border-0 border-primary rounded-full w-10 h-10 pt-1" @click="visible = true" v-tooltip.bottom="'Search Admitted Patients'">
+    <button v-if="global" 
+        type="button" 
+        class="text-primary border-0 border-primary rounded-full w-10 h-10 pt-1" 
+        v-tooltip.bottom="'Search Admitted Patients'"
+        @click="show()" 
+    >
         <i class="pi pi-search !text-4xl !text-primary layout-topbar-logo"></i>
     </button>
+
+    <Button v-else text icon="pi pi-search" @click="show()" />
 
     <Dialog 
         modal
@@ -185,15 +205,16 @@ watch(
                 :globalFilterFields="['patname', 'dietname', 'hpercode', 'wardname', 'admdate']"
                 pt:root:class="sm:text-xs md:text-xs lg:text-base hover:cursor-pointer"
                 scrollable scrollHeight="60vh"
+                removable-sort
                 @row-click="redirect"
             >
-                <template #header v-if="data">
+                <template #header v-if="admitted_patients">
                     <div class="flex items-start gap-4 py-4">
                         <div class="grid grid-cols-2 gap-2 w-full">
                             <div class="col-span-2 md:col-span-1 flex gap-4">
                                 <Button outlined class="!py-0 !px-5">
                                     <Icon name="healthicons:female-and-male" size="2em" class="text-primary"/>
-                                    <span class="font-bold text-center">{{ data.length }}</span>
+                                    <span class="font-bold text-center">{{ admitted_patients.length }}</span>
                                 </Button>
 
                                 <div class="flex items-center gap-2">
@@ -273,7 +294,7 @@ watch(
                     <template #filterapply />
                 </Column>
 
-                <Column field="admdate" header="Admission Date" :showFilterMatchModes="false" showClearButton style="width: 10%" >
+                <Column field="admdate" header="Admission Date" :showFilterMatchModes="false" sortable showClearButton style="width: 10%" >
                     <template #body="{data, field}">
                         <span>{{ formatMonthShort(data[field]) }}</span>
                     </template>
