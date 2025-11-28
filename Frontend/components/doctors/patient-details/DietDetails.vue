@@ -107,6 +107,27 @@ function setPrecautions(precaution) {
     precautions.value = precaution;
 }
 
+function formatScheduleString(timeString) {
+    if (!timeString || typeof timeString !== "string") {
+        return "";
+    }
+
+    let times;
+
+    try {
+        times = JSON.parse(timeString); // convert string → array
+    } catch (error) {
+        return ""; // return empty if invalid format
+    }
+
+    if (!Array.isArray(times) || times.length === 0) {
+        return "";
+    }
+
+    return times.join(", ");
+}
+
+
 //  Popup to confirm changes to precaution
 const confirmSavePrecautions = () => {
     confirm.require({
@@ -379,7 +400,7 @@ onMounted(async () => {
                 <Divider type="dashed" class="!my-0" />
     
                 <div class="flex flex-col gap-2">
-                    <div>
+                    <div> <!-- ANCHOR Special Nutrition Supplement (SNS) -->
                         <span class="font-bold text-base">Special Nutrition Supplement (SNS)</span>
                     </div>
     
@@ -396,10 +417,10 @@ onMounted(async () => {
                         </div>
     
                         <div class="flex flex-col lg:flex-row gap-2 justify-between">
-                            <span class="text-muted-color italic">Frequency</span>
+                            <span class="text-muted-color italic"> Frequency</span>
     
                             <div class="flex gap-2">
-                                <span class="font-semibold">{{ data?.onsFrequency ?? '-' }}</span>
+                                <span class="font-semibold">{{ formatScheduleString(data?.onsFrequency) || '-' }}</span>
                             </div>
                         </div>
     

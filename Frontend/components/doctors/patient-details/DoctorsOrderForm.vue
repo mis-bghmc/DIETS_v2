@@ -226,13 +226,24 @@ function getCutOffTime() {
 //  Calories
 function getCalories() {
     const age = patient.value?.patage;
+    const sex = patient.value?.patsex;
     
-    return age >= 1 && age <= 2 ? 1000
-            : age >= 3 && age <= 5 ? 1300
-            : age >= 6 && age <= 9 ? 1500
-            : age >= 10 && age <= 12 ? 2000
-            : age >= 13 && age <= 18 ? 2600
-            : null;
+    if (!age || !sex) return null;
+    
+    const calorieTable = [
+        { ageRange: [1, 2], M: 1000, F: 920 },
+        { ageRange: [3, 5], M: 1350, F: 1260 },
+        { ageRange: [6, 9], M: 1600, F: 1470 },
+        { ageRange: [10, 12], M: 2060, F: 1980 },
+        { ageRange: [13, 15], M: 2700, F: 2170 },
+        { ageRange: [16, 18], M: 3010, F: 2280 }
+    ];
+    
+    const entry = calorieTable.find(row => 
+        age >= row.ageRange[0] && age <= row.ageRange[1]
+    );
+    
+    return entry ? entry[sex] : null;
 }
 
 // ANCHOR Get nutrient value
@@ -490,11 +501,11 @@ onMounted(async () => {
                                 <AccordionHeader> 
                                     <div class="flex justify-start items-center gap-4">
                                         <Icon name="healthicons:child-care" size="1.5rem"/>
-                                        <span class="text-base font-bold"> Pediatric Nutrient Guide</span>
+                                        <span class="text-base font-bold"> Macronutrient Distribution</span>
                                     </div>
                                 </AccordionHeader>
                                 <AccordionContent>
-                                    <p class="ml-12"> Prescribed macronutrient percentage range.</p>
+                                    <p class="ml-12"> Acceptable Macronutrient Distribution Ranges (AMDR).</p>
                                     <ul class="flex flex-col gap-2 text-sm">
                                         <li class="flex items-center gap-2">
                                             <Icon name="healthicons:star-small" class="w-10 lg:text-2xl text-primary" />
@@ -694,19 +705,19 @@ onMounted(async () => {
                                     <div class="flex flex-col md:flex-row gap-2 w-full">
                                         <IftaLabel class="w-full md:w-56">
                                             <InputNumber id="protein" v-model="nutrientPercentageFormula.protein" :min="10" :max="20" suffix=" %"  :invalid="isProtein_invalid" class="w-full" @change="setNutrients()"/>
-                                            <label for="protein">Protein ({{ order.protein }} g)</label>
+                                            <label for="protein">Protein <span class="font-bold text-primary"> ({{ order.protein }} g)</span></label>
                                         </IftaLabel>
     
                                         <IftaLabel class="w-full md:w-56">
                                             <InputNumber id="carbohydrates" v-model="nutrientPercentageFormula.carbohydrates" :min="45" :max="60" suffix=" %"  :invalid="isCarbohydrates_invalid" class="w-full" @change="setNutrients()"/>
-                                            <label for="carbohydrates">Carbohydrates ({{ order.carbohydrates }} g)</label>
+                                            <label for="carbohydrates">Carbohydrates <span class="font-bold text-primary"> ({{ order.carbohydrates }} g)</span> </label>
                                         </IftaLabel>
                                     </div>
 
                                     <div class="flex flex-col md:flex-row gap-2 w-full">
                                         <IftaLabel class="w-full md:w-56">
                                             <InputNumber id="fats" v-model="nutrientPercentageFormula.fats" :min="30" :max="35" suffix=" %"  :invalid="isFats_invalid" class="w-full" @change="setNutrients()"/>
-                                            <label for="fats">Fats ({{ order.fats }} g)</label>
+                                            <label for="fats">Fats <span class="font-bold text-primary"> ({{ order.fats }} g)</span></label>
                                         </IftaLabel>
     
                                         <IftaLabel class="w-full md:w-56">
