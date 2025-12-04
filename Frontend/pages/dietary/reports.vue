@@ -1,8 +1,13 @@
 <script setup>
-const toast = useToast();
-
 const wards_store = useWardsStore();
-const { wards } = storeToRefs(wards_store);
+
+const { error, status } = await useAsyncData(
+    'wards', 
+    () => wards_store.getWards(),
+    {
+        default: () => []
+    }
+);
 
 const reports = ref({
     'Meal Census': false,
@@ -19,18 +24,6 @@ function getReport() {
     reports.value[report.value] = true;
     prev_report.value = report.value;
 }
-
-//  On mounted
-onMounted(async () => {
-    if(Object.keys(wards.value)?.length) return;
-
-    try {
-        await wards_store.getWards();
-
-    }catch {
-        toast.add({ severity: 'error', summary: 'Error!', detail: 'An error has occured. Please log it into the intranet or call extension 202. [Wards]' });
-    }
-});
 </script>
 
 <template>
@@ -44,9 +37,21 @@ onMounted(async () => {
             </div>
     
             <div class="col-span-3 md:col-span-2 w-full bg-[--surface-card] p-4 rounded-md">
-                <MealCensusForm :class="{'hidden': !reports['Meal Census']}" />
-                <DietListForm :class="{'hidden': !reports['Diet List']}" />
-                <DietTagsForm :class="{'hidden': !reports['Diet Tags']}" />
+                <div :class="{'hidden': !reports['Meal Census']}">
+                    <MealCensusForm />
+                </div>
+
+                <div :class="{'hidden': !reports['Diet List']}">
+                    <ViewTemplate :error="error" :status="status">
+                        <DietListForm />
+                    </ViewTemplate>
+                </div>
+
+                <div :class="{'hidden': !reports['Diet Tags']}">
+                    <ViewTemplate :error="error" :status="status">
+                        <DietTagsForm />
+                    </ViewTemplate>
+                </div>
             </div>
         </div>
     </div>

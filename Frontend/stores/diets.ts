@@ -14,45 +14,42 @@ export const useDietsStore = defineStore('diets', () => {
 
     //  Fetch diets
     async function getDiets() {
-        try {
+        if(diets.value.length === 0){
             //  All
             diets.value  = await DietsService.getDiets();
-
+    
             //  Routine
             diets_routine.value = diets.value?.filter((item: {diettype: string}) => item.diettype === 'RT');
             diets_routine.value?.push({dietcode: 'Therapeutic Diets', dietname: 'Therapeutic Diets'});
-
+    
             //  Routine for patients <= 6 months old
             diets_routine_non_breastfeeding.value = diets_routine.value?.filter((item: {dietcode: string}) =>  item.dietcode !== '42');
-
+    
             //  Therapeutic
             diets_therapeutic.value = diets.value?.filter((item: {diettype: string}) => item.diettype === 'TP');
-
+    
             //  Soft
             const diets_soft_prefixed = diets.value?.filter((item: {diettype: string}) => item.diettype === 'SD');
             diets_soft.value = diets_soft_prefixed?.map((item: {dietname: string}) => ({...item, dietname: item.dietname?.replace(/^Soft /, '')}));
-
+    
             //  Enteral
             const enteral = diets.value?.filter((item: {diettype: string}) => item.diettype === 'EN');
-
+    
             //  Enteral - diet
             diets_enteral.value = enteral?.filter((item: {dietcode: string}) =>  item.dietcode !== '44');
-
+    
             //  Enteral - SNS
             sns_enteral.value = enteral?.filter((item: {dietcode: string}) =>  item.dietcode !== '34');
 
-        }catch(error) {
-            throw error;
+            return true;
         }
     }
 
     //  Fetch enteral feeding modes
     async function getFeedingModes() {
-        try{
-            feeding_modes.value  = await DietsService.getFeedingModes();
-
-        }catch(error) {
-            throw error;
+        if(feeding_modes.value.length === 0){
+            feeding_modes.value = await DietsService.getFeedingModes();
+            return true;
         }
     }
 

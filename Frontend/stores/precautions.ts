@@ -7,11 +7,9 @@ export const usePrecautionsStore = defineStore('precautions', () => {
 
     //  Fetch precautions
     async function getPrecautions() {
-        try {
+        if(precautions.value.length === 0){
             precautions.value  = await PatientsService.getPrecautions();
-
-        }catch(error) {
-            throw error;
+            return true;
         }
     }
 

@@ -1,16 +1,14 @@
 import { defineStore } from 'pinia';
 import { EmployeesService } from '~/services/EmployeesService';
 
-export const useEmployeesStore = defineStore('wards', () => {
+export const useEmployeesStore = defineStore('employees', () => {
     const allowed_personnel = ref<any>([]);
 
     //  Fetch wards
     async function getAllowedPersonnel() {
-        try {
+        if(allowed_personnel.value.length === 0){
             allowed_personnel.value  = await EmployeesService.getAllowedPersonnel();
-
-        }catch(error) {
-            throw error;
+            return true;
         }
     }
 

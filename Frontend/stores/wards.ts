@@ -6,13 +6,12 @@ export const useWardsStore = defineStore('wards', () => {
 
     //  Fetch wards
     async function getWards() {
-        try {
+        if(wards.value.length === 0){
             wards.value  = await WardsService.getWards();
             wards.value.push({wardcode: 'ERB', wardname: 'ER Boarders'});
             useSort().sortArray(wards.value, 'wardname');
-
-        }catch(error) {
-            throw error;
+    
+            return true;
         }
     }
 

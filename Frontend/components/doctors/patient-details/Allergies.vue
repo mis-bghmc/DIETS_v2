@@ -6,14 +6,19 @@ const props = defineProps({
 const emit = defineEmits(['updated', 'error', 'mounted']);
 
 const allergies_store = useAllergiesStore();
-const { allergies, main, sub } = storeToRefs(allergies_store);
+const { main, sub } = storeToRefs(allergies_store);
+
+const { error, status } = await useAsyncData(
+    'allergies', 
+    () => allergies_store.getAllergies(),
+    {
+        default: () => []
+    }
+);
 
 const food_allergies = ref();
 const food_allergies_main = ref();
 const food_allergies_sub = ref();
-
-const error = ref();
-const status = ref();
 
 
 //  Set the allergy option value based on food allergies
@@ -52,28 +57,6 @@ function includesFoodAllergies(_allergies) {
     return _allergies?.every(allergy => food_allergies_sub.value?.includes(allergy));
 }
 
-//  Get allergies
-async function getAllergies() {
-    if(Object.keys(allergies.value)?.length) {
-        emit('mounted');
-        return;
-    }
-
-    status.value = 'pending';
-
-    try {
-        await allergies_store.getAllergies();
-
-    }catch(e) {
-        error.value = e;
-        emit('error');
-
-    }finally{
-        status.value = 'success';
-        emit('mounted');
-    }
-}
-
 
 //  Watcher
 watch(
@@ -83,11 +66,19 @@ watch(
     }
 );
 
+//  Watcher for allergies error and status
+watch(
+    [error, status],
+    (new_value) => {
+        if(new_value[0]) emit('error');
+        if(new_value[1] === 'success') emit('mounted');
+    },
+    {immediate: true}
+);
+
 
 //  On mounted
 onMounted(async () => {
-    await getAllergies();
-    
     food_allergies_sub.value = sub.value?.map(item => item.name);
     
     setFoodAllergiesMain();

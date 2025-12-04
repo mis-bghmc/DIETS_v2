@@ -8,36 +8,18 @@ const emit = defineEmits(['updated', 'error', 'mounted']);
 const precautions_store = usePrecautionsStore();
 const { precautions } = storeToRefs(precautions_store);
 
+const { error, status } = await useAsyncData(
+    'precautions', 
+    () => precautions_store.getPrecautions(),
+    {
+        default: () => []
+    }
+);
+
 const precaution = ref();
 
-const error = ref();
-const status = ref();
 
-
-//  Get precaution
-async function getPrecautions() {
-    if(Object.keys(precautions.value)?.length) {
-        emit('mounted');
-        return;
-    }
-
-    status.value = 'pending';
-
-    try {
-        await precautions_store.getPrecautions();
-
-    }catch(e) {
-        error.value = e;
-        emit('error');
-
-    }finally{
-        status.value = 'success';
-        emit('mounted');
-    }
-}
-
-
-//  Watcher
+//  Watcher for selected precautions
 watch(
     precaution,
     (new_value) => {
@@ -45,11 +27,19 @@ watch(
     }
 );
 
+//  Watcher for precautions error and status
+watch(
+    [error, status],
+    (new_value) => {
+        if(new_value[0]) emit('error');
+        if(new_value[1] === 'success') emit('mounted');
+    },
+    {immediate: true}
+);
+
 
 //  On mounted
 onMounted(async () => {
-    await getPrecautions();
-    
     const precaution_list = props.data?.split(', ') || [];
 
     precaution.value = precaution_list?.map(p => p.trim()) || [];

@@ -33,13 +33,9 @@ const isEnteral_invalid = computed(() => order.value?.category === 'Enteral' && 
 const isSnsType_invalid = computed(() => !!(order.value.sns_type?.length && !order.value.sns_frequency?.length));
 
 const isFormInvalid = computed(() => {
-
-    if (order.value.diet_type === '16') {
-        return false;
-    }
-    
-    return (
-        isDietType_invalid.value ||
+    return order.value.diet_type === '16' 
+    ?   false 
+    :   isDietType_invalid.value ||
         isTherapeuticType_invalid.value ||
         isCalories_invalid.value ||
         !order.value.dilution ||
@@ -49,8 +45,6 @@ const isFormInvalid = computed(() => {
         isSnsType_invalid.value ||
         hasError_foodAllergies.value ||
         hasError_foodPrecautions.value
-    );
-
 });
 
 
@@ -81,13 +75,8 @@ const hasError_foodPrecautions = ref(false);
 
 const dietTypes_options = ref();
 const dietSubTypes_options = ref();
-const feedingModes_options = computed(() => {
-    if (order.value.diet_type === '34') {
-        return feeding_modes.value.filter(item => item.id !== '1');
-    } else {
-        return feeding_modes.value;
-    }
-});
+const feedingModes_options = computed(() => { return order.value.diet_type === '34' ? feeding_modes.value.filter(item => item.id !== '1') : feeding_modes.value});
+
 // ANCHOR nutrient percentage formula
 const nutrientPercentageFormula = ref({
     protein: 15,
@@ -127,6 +116,23 @@ const initDraft = () => {
         remarks: null
     }
 };
+
+const { error: dt_error, status: dt_status } = await useAsyncData(
+    'diet-types', 
+    () => diets_store.getDiets(),
+    {
+        default: () => []
+    }
+);
+
+const { error: ap_error, status: ap_status } = await useAsyncData(
+    'allowed_personnel', 
+    () => employees_store.getAllowedPersonnel(),
+    {
+        default: () => []
+    }
+);
+
 
 //  Save doctor's order
 async function saveOrder() {
@@ -204,7 +210,6 @@ async function create() {
     
     initOrder();
     setNutrients(order.value.calories);
-    await getDietTypes();
     setDietTypes();
 }
 
@@ -266,18 +271,6 @@ function setPrecautions(precaution) {
     use_draft.value = false;
 }
 
-//  Get diet types
-async function getDietTypes() {
-    if(Object.keys(diets.value).length) return;
-
-    try {
-        await diets_store.getDiets();
-
-    }catch(error) {
-        toast.add({ severity: 'error', summary: 'Error!', detail: 'An error has occured. Please log it into the intranet or call extension 202. [New Doctor\'s Order -> Diet types]' });
-    }
-}
-
 //  Set diet types
 function setDietTypes() {
     dietTypes_options.value = diets_enteral.value;
@@ -287,7 +280,7 @@ function setDietTypes() {
     }
 }
 
-
+//
 function setDietTypesSub() {
     isVisible_subType.value = false;
     order.value.diet_type_sub = null; 
@@ -298,6 +291,7 @@ function setDietTypesSub() {
     if(order.value.diet_type === 'Therapeutic Diets') dietSubTypes_options.value = diets_therapeutic.value;
 }
 
+//
 function onChangeFeedingModeEvent() { 
 
     if (order.value.feeding_mode === '1') {
@@ -367,18 +361,6 @@ function updateAllergiesPrecautions() {
     use_draft.value = true;
 }
 
-//  Get allowed personnel
-async function getAllowedPersonnel() {
-    if(Object.keys(allowed_personnel.value)?.length) return;
-
-    try {
-        await employees_store.getAllowedPersonnel();
-
-    }catch(error) {
-        toast.add({ severity: 'error', summary: 'Error!', detail: 'An error has occured. Please log it into the intranet or call extension 202. [New Doctor\'s Order -> Allowed personnel]' });
-    }
-}
-
 
 // ANCHOR Watcher 
 watch(
@@ -390,27 +372,28 @@ watch(
     { deep: true }
 );
 
-//  On mounted
-onMounted(async () => {
-    await getAllowedPersonnel();
-    
-    allowedPositions_list.value = allowed_personnel.value?.map(item => item.title);
-});
-
-
-
-
+//  Watcher for allowed personnel
+watch(
+    allowed_personnel,
+    (new_value) => {
+        allowedPositions_list.value = new_value?.map(item => item.title);
+    },
+    {immediate: true}
+);
 </script>
 
 <template>
     <div>
-        <div v-if="allowedPositions_list?.some(item => user?.postitle?.toUpperCase().includes(item))" class="flex flex-col items-center">
-            <Button class="w-full md:w-56 font-bold" :disabled="!patient.height || !patient.weight" v-tooltip.bottom="'Create a new Diet Order for this patient.'" @click="create()" >
-                <Icon name="fluent:add-circle-12-filled" size="1.5em"/>
-                <label class="hover:cursor-pointer">New Diet Order</label>  
-            </Button>
-            <span v-if="!patient.height || !patient.weight" class="italic text-sm text-red-400">**No height and/or weight**</span>
-        </div>
+        <ViewTemplate :error="ap_error" :status="ap_status">
+            <div v-if="allowedPositions_list?.some(item => user?.postitle?.toUpperCase().includes(item))" class="flex flex-col items-center">
+                <Button class="w-full md:w-56 font-bold" :disabled="!patient.height || !patient.weight" v-tooltip.bottom="'Create a new Diet Order for this patient.'" @click="create()" >
+                    <Icon name="fluent:add-circle-12-filled" size="1.5em"/>
+                    <label class="hover:cursor-pointer">New Diet Order</label>  
+                </Button>
+                <span v-if="!patient.height || !patient.weight" class="italic text-sm text-red-400">**No height and/or weight**</span>
+            </div>
+        </ViewTemplate>
+
         <Dialog 
             modal
             v-model:visible="isVisible_newOrder" 
@@ -580,16 +563,18 @@ onMounted(async () => {
                             <div class="mx-5 pl-12 pt-4 pb-8 border-primary border-l">
                                 <div class="grid grid-cols-2 gap-2">
                                     <div class="col-span-2 md:col-span-1">
-                                        <Select 
-                                            v-model="order.diet_type"
-                                            :options="dietTypes_options"
-                                            optionLabel="dietname" 
-                                            optionValue="dietcode" 
-                                            :invalid="!order.diet_type"
-                                            placeholder="Select Diet Type"
-                                            class="w-full"
-                                            @change="setDietTypesSub()"
-                                        />
+                                        <ViewTemplate :error="dt_error" :status="dt_status">
+                                            <Select 
+                                                v-model="order.diet_type"
+                                                :options="dietTypes_options"
+                                                optionLabel="dietname" 
+                                                optionValue="dietcode" 
+                                                :invalid="!order.diet_type"
+                                                placeholder="Select Diet Type"
+                                                class="w-full"
+                                                @change="setDietTypesSub()"
+                                            />
+                                        </ViewTemplate>
                                     </div>
                                     
                                     <div v-if="order.diet_type === '01' && !isVisible_subType" class="col-span-2 md:col-span-1" @click="isVisible_subType = true">

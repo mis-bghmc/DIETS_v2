@@ -36,6 +36,15 @@ const mounted_precautions = ref(false);
 
 const feeding_mode = ref();
 
+const { error: fm_error, status: fm_status, refresh: fm_refresh } = await useLazyAsyncData(
+    'feeding-modes', 
+    () => diets_store.getFeedingModes(),
+    {
+        default: () => [],
+        immediate: false
+    }
+);
+
 
 //  Edit allergies
 function editAllergies(){
@@ -168,29 +177,17 @@ async function savePrecaution() {
     }
 }
 
-//  Get feeding mode
-async function getFeedingModes() {
-    if(Object.keys(feeding_modes.value).length) return;
-
-    try {
-        await diets_store.getFeedingModes();
-
-    }catch(error) {
-        toast.add({ severity: 'error', summary: 'Error!', detail: 'An error has occured. Please log it into the intranet or call extension 202. [Diet Details -> Feeding modes]' });
-    }
-}
-
 
 //  On mounted
 onMounted(async () => {
-    await getFeedingModes();
+    await fm_refresh();
 
     feeding_mode.value = feeding_modes.value?.find(item => item.id === props.data?.feedingMode?.trim())?.name;
 });
 </script>
 
 <template>
-    <div>
+    <ClientOnly>
         <ConfirmDialog group="headless" class="border border-primary rounded-md" pt:mask:class="backdrop-blur-sm">
             <template #container="{ message, acceptCallback, rejectCallback }">
                 <div class="flex flex-col items-center p-4">
@@ -301,7 +298,9 @@ onMounted(async () => {
                                 <div class="flex flex-col gap-2 pl-4">
                                     <div class="flex justify-between">
                                         <span class="text-muted-color italic">Mode</span>
-                                        <span class="font-semibold">{{ feeding_mode }}</span>
+                                        <ViewTemplate :error="fm_error">
+                                            <span class="font-semibold">{{ feeding_mode }}</span>
+                                        </ViewTemplate>
                                     </div>
 
                                     <div class="flex justify-between">
@@ -424,7 +423,7 @@ onMounted(async () => {
                             </div>
                         </div>
     
-                        <div class="flex flex-col lg:flex-row gap-2 justify-between">
+                        <div class="flex flex-col gap-2 justify-between" :class="{'flex-col': data?.onsDescription, 'flex-row': !data?.onsDescription}">
                             <span class="text-muted-color italic">Other Details</span>
                             <span v-if="!data?.onsDescription" class="font-semibold">-</span>
                             
@@ -452,5 +451,5 @@ onMounted(async () => {
                 </div>
             </div>
         </div>
-    </div>
+    </ClientOnly>
 </template>
