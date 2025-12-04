@@ -9,7 +9,7 @@ interface DoctorsOrdersServiceInterface
     public function getLatestOrder($docointkey);
     public function getDoctorsOrders();
     public function getDoctorsOrdersTotal();
-    public function updatePrecautions($id, $precaution);
+    public function updatePrecautions($id, $precaution, $updated_by);
     public function save($data);
     public function savePriority($data, $date);
     public function saveDraft($data);

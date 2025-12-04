@@ -79,9 +79,11 @@ class DoctorsOrdersService implements DoctorsOrdersServiceInterface
     }
 
     //  Update precautions
-    public function updatePrecautions($id, $precaution)
+    public function updatePrecautions($id, $precaution, $updated_by)
     {
         $this->orders_repository->updatePrecautions($id, $precaution);
+
+        Log::channel('precautions')->info("[" . $updated_by . "] Set doctor's order [" . $id . "] precautions to " . $precaution);
     }
 
     //  Save doctor's orders

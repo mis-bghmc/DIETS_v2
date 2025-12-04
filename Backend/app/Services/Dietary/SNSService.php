@@ -31,7 +31,7 @@ class SNSService implements SNSServiceInterface
     {
         $this->sns_repository->updateMealStatus($id, $meal_status, $updated_by);
 
-        Log::channel('sns')->info("[" . $id . "] [" . $meal_time . "] [" . $meal_status . "] " . $updated_by);
+        Log::channel('sns')->info("[" . $id . "] [" . $meal_time . "] - [" . $updated_by . "] updated meal status to [" . $meal_status . "]");
 
         $updated = [
             'id' => $id,

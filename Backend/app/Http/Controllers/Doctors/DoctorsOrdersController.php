@@ -58,7 +58,7 @@ class DoctorsOrdersController extends Controller
     //  Update precautions
     public function updatePrecautions(Request $request)
     {
-        $this->orders_service->updatePrecautions($request->id, $request->precaution);
+        $this->orders_service->updatePrecautions($request->id, $request->precaution, $request->updated_by);
 
         return response()->json([
             'message' => 'Precautions updated successfully!'

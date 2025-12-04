@@ -68,15 +68,15 @@ return [
         'scheduler' => [
             'driver' => 'single',
             'name' => 'scheduler',
-            'path' => storage_path('logs/scheduler.log'),
+            'path' => storage_path('logs/scheduler/scheduler.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
         ],
 
         'diet' => [
             'driver' => 'daily',
-            'name' => 'diet',
-            'path' => storage_path('logs/diet.log'),
+            'name' => 'diet-list',
+            'path' => storage_path('logs/diet-list/diet-list.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => env('LOG_DAILY_DAYS', 30),
             'replace_placeholders' => true,
@@ -84,8 +84,8 @@ return [
 
         'sns' => [
             'driver' => 'daily',
-            'name' => 'sns',
-            'path' => storage_path('logs/sns.log'),
+            'name' => 'sns-list',
+            'path' => storage_path('logs/sns-list/sns-list.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => env('LOG_DAILY_DAYS', 30),
             'replace_placeholders' => true,
@@ -99,10 +99,18 @@ return [
             'replace_placeholders' => true,
         ],
 
-        'food_requests' => [
+        'precautions' => [
             'driver' => 'single',
-            'name' => 'food_requests',
-            'path' => storage_path('logs/food-requests.log'),
+            'name' => 'precautions',
+            'path' => storage_path('logs/patients/precautions.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'replace_placeholders' => true,
+        ],
+
+        'food_allergies' => [
+            'driver' => 'single',
+            'name' => 'food_allergies',
+            'path' => storage_path('logs/patients/food_allergies.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
         ],

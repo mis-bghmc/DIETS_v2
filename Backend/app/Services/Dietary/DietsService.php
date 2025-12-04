@@ -29,7 +29,7 @@ class DietsService implements DietsServiceInterface
     {
         $this->diets_repository->updateMealStatus($id, $meal_status, $updated_by);
 
-        Log::channel('diet')->info("[" . $id . "] [" . $meal_time . "] [" . $meal_status . "] " . $updated_by);
+        Log::channel('diet')->info("[" . $id . "] [" . $meal_time . "] - [" . $updated_by . "] updated meal status to [" . $meal_status . "]");
 
         $updated = [
             'id' => $id,

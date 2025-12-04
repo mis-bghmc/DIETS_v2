@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Services\Interfaces\PatientsServiceInterface;
 use App\Repositories\Interfaces\PatientsRepositoryInterface;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
 
@@ -67,6 +68,8 @@ class PatientsService implements PatientsServiceInterface
     public function updatePatientFoodAllergies($hpercode, $allergies, $licno)
     {
         $this->patients_repository->updatePatientFoodAllergies($hpercode, $allergies, $licno);
+
+        Log::channel('food_allergies')->info("[" . $licno . "] Set patient [" . $hpercode . "] food allergies to " . $allergies);
     }
 
 

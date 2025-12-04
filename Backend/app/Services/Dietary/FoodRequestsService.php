@@ -43,8 +43,6 @@ class FoodRequestsService implements FoodRequestsServiceInterface
             }
 
             broadcast(new FoodRequests(Date::now()))->toOthers();
-
-            Log::channel('food_requests')->info("[" . $data->requesting . "] [" . implode(",", $data->meals) . "] [" . $data->qnty . "] " . $data->updated_by);
         });
     }
 
@@ -54,7 +52,5 @@ class FoodRequestsService implements FoodRequestsServiceInterface
         $this->food_requests_repository->updateFoodRequests($data);
 
         broadcast(new FoodRequests(Date::now()))->toOthers();
-
-        Log::channel('food_requests')->info("[" . $data->id . "] [" . $data->status . "] " . $data->updated_by);
     }
 }
