@@ -24,11 +24,12 @@ const { error, status, refresh } = await useAsyncData(
     }
 );
 
-const { refresh: my_refresh } = await useAsyncData(
+const { refresh: my_refresh } = await useLazyAsyncData(
     'my-patients', 
     () => patients_store.getMyPatients(user.value?.employeeid),
     {
-        default: () => []
+        default: () => [],
+        immediate: false
     }
 );
 
