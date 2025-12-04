@@ -32,6 +32,16 @@ function refreshHistory() {
         await diet_history.value?.refresh();
     });
 }
+
+//  Update food allergies
+function updateFoodAllergies(food_allergies) {
+    data.value[0].category = food_allergies;
+}
+
+//  Update precuations
+function updatePrecautions(precautions) {
+    data.value[0].precaution = precautions;
+}
 </script>
 
 <template>
@@ -67,7 +77,7 @@ function refreshHistory() {
         
                     <div class="col-span-6 md:col-span-3 lg:col-span-4">
                         <div class="bg-[--surface-card] p-6 rounded-md h-full">
-                            <DietDetails :data="diet_details" :from-history="false" />
+                            <DietDetails :data="diet_details" :from-history="false" @allergy-updated="updateFoodAllergies" @precautions-updated="updatePrecautions" />
                         </div>
                     </div>
                 </div>

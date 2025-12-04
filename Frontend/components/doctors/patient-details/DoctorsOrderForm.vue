@@ -160,6 +160,8 @@ async function saveOrder() {
 
         toast.add({ severity: 'success', summary: 'Success!', detail: 'Doctor\'s order for patient diet have been successfully saved.', life: 5000 });
 
+        props.data[0].category = order.value.food_allergies;
+
     }catch(error){
         toast.add({ severity: 'error', summary: 'Error!', detail: 'An error has occured. Please log it into the intranet or call extension 202. [New Doctor\'s Order -> save order]' });
 

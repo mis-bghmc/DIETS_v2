@@ -20,6 +20,8 @@ const props = defineProps({
     orderStatus: Object
 });
 
+const emit = defineEmits(['allergyUpdated', 'precautionsUpdated']);
+
 const edit_allergies = ref(false);
 const edit_precautions = ref(false);
 
@@ -95,6 +97,8 @@ async function saveAllergies() {
 
         toast.add({ severity: 'success', summary: 'Success!', detail: 'Food allergies have been successfully saved.', life: 5000 });
 
+        emit('allergyUpdated', food_allergies.value);
+
     }catch(error){
         toast.add({ severity: 'error', summary: 'Error!', detail: 'An error has occured. Please log it into the intranet or call extension 202. [Diet Details -> Food Allergies -> save]' });
         
@@ -168,6 +172,8 @@ async function savePrecaution() {
         props.data.precaution = _precautions;
 
         toast.add({ severity: 'success', summary: 'Success!', detail: 'Precautions have been successfully saved.', life: 5000 });
+
+        emit('precautionsUpdated', _precautions);
 
     }catch(error){
         toast.add({ severity: 'error', summary: 'Error!', detail: 'An error has occured. Please log it into the intranet or call extension 202. [Diet Details -> Precautions -> save]' });
