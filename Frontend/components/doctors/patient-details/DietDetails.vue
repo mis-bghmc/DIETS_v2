@@ -136,7 +136,6 @@ function formatScheduleString(timeString) {
     return times.join(", ");
 }
 
-
 //  Popup to confirm changes to precaution
 const confirmSavePrecautions = () => {
     confirm.require({
@@ -161,7 +160,8 @@ async function savePrecaution() {
         await DoctorsOrdersService.updatePrecautions({
             body: {
                 id: props.data?.docointkey,
-                precaution: _precautions
+                precaution: _precautions,
+                updated_by: user.value.employeeid
             }
         });
     
